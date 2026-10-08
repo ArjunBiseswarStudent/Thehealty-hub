@@ -583,8 +583,7 @@ p {
     <!-- SCHERM 1: START -->
     <section class="screen start active" id="s1">
         <div class="logo-wrap">
-            <!-- Aangepast naar huidige pad direct in de hoofdmap -->
-            <img src="Gezonde Hub Uitdaging Logo (1).png" alt="Healthy Hub Logo">
+            <img src="logo.png" alt="Healthy Hub Logo">
         </div>
         <div class="kicker">Ontdek jouw positieve gezondheid</div>
         <h1>Healthy Hub Challenge</h1>
@@ -626,8 +625,8 @@ p {
                     </div>
                 </div>
                 <div style="text-align:center">
-                    <!-- Aangepast naar submap Thehealthy-hub -->
-                    <img class="evolution-img" src="Thehealthy-hub/entity1.png" alt="Evolutie Fase 1">
+                    <!-- Direct naar de hoofdmap verwezen -->
+                    <img class="evolution-img" src="entity1.png" alt="Evolutie Fase 1">
                     <p><strong style="color:var(--teal)">Klaar om jouw profiel te ontdekken?</strong></p>
                     <button class="primary" onclick="go(3)">NAAR DE VRAGEN →</button>
                 </div>
@@ -650,8 +649,8 @@ p {
             </div>
             <div class="question-layout">
                 <div style="text-align:center">
-                    <!-- Aangepast naar submap Thehealthy-hub -->
-                    <img class="evolution-img" id="questionEvoImg" src="Thehealthy-hub/entity1.png" alt="Evolutie">
+                    <!-- Direct naar de hoofdmap verwezen -->
+                    <img class="evolution-img" id="questionEvoImg" src="entity1.png" alt="Evolutie">
                 </div>
                 <div class="question-card">
                     <span class="question-number">Vraag <span id="qnum">1</span> / <span id="qtotal">3</span></span>
@@ -689,8 +688,8 @@ p {
                     <p>Op basis van jouw antwoorden is een eerste profiel ontstaan.<br>Klik op een dimensie om jouw aanbevolen vervolgstap te bekijken!</p>
                 </div>
                 <div class="profile-avatar-wrap">
-                    <!-- Aangepast naar submap Thehealthy-hub -->
-                    <img class="evolution-img" id="finalEvoImg" src="Thehealthy-hub/entity3.png" alt="Eind Evolutie">
+                    <!-- Direct naar de hoofdmap verwezen -->
+                    <img class="evolution-img" id="finalEvoImg" src="entity3.png" alt="Eind Evolutie">
                 </div>
             </div>
             <div class="dimensions" id="profileDimensions"></div>
@@ -728,11 +727,11 @@ p {
 </div>
 
 <script>
-// Paden naar de 3 evolutie-afbeeldingen in de submap Thehealthy-hub/
+// Paden aangepast: direct in de hoofdmap
 const evolutionImages = [
-    "Thehealthy-hub/entity1.png", // Evolutie 1
-    "Thehealthy-hub/entity2.png", // Evolutie 2
-    "Thehealthy-hub/entity3.png"  // Evolutie 3
+    "entity1.png",
+    "entity2.png",
+    "entity3.png"
 ];
 
 const dimensionsData = [
