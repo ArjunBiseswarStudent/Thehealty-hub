@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Healthy Hub Challenge Prototype</title>
+
+<style>
+:root {
+    --blue: #1B455B;
+    --teal: #30706E;
+    --green: #64B255;
+    --lime: #96CC4B;
+    --pale: #E2F2CB;
+    --white: #FFFFFF;
+    --text: #173C4D;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #f8fcf4, #e9f7df);
+    color: var(--text);
+}
+
+button {
+    font: inherit;
+    cursor: pointer;
+}
+
+.app {
+    width: 100vw;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 28px;
+}
+
+.screen {
+    display: none;
+    width: min(1280px, 100%);
+    min-height: 780px;
+    background: rgba(255,255,255,.94);
+    border: 1px solid rgba(48,112,110,.12);
+    border-radius: 34px;
+    box-shadow: 0 24px 70px rgba(27,69,91,.15);
+    overflow: hidden;
+    position: relative;
+}
+
+.screen.active {
+    display: flex;
+}
+
+.content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    padding: 48px 62px;
+}
+
+/* STARTSCHERM */
+.start {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: linear-gradient(145deg, #ffffff 25%, #eef8e7);
+    padding: 40px 20px;
+}
+
+.logo-wrap {
+    width: 100%;
+    max-width: 320px;
+    max-height: 380px;
+    overflow: hidden;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo-wrap img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+.kicker {
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: var(--teal);
+    text-transform: uppercase;
+    font-size: 15px;
+}
+
+h1 {
+    font-size: clamp(28px, 5vw, 44px);
+    margin: 8px 0 10px;
+    color: var(--blue);
+}
+
+h2 {
+    font-size: clamp(22px, 4vw, 34px);
+    margin: 8px 0;
+    color: var(--blue);
+}
+
+p {
+    font-size: clamp(15px, 2vw, 19px);
+    line-height: 1.6;
+    color: #48616d;
+}
+
+/* BUTTONS */
+.primary {
+    border: 0;
+    border-radius: 18px;
+    padding: 18px 48px;
+    color: white;
+    font-weight: 800;
+    font-size: 21px;
+    background: linear-gradient(100deg, var(--teal), var(--green));
+    box-shadow: 0 12px 24px rgba(48,112,110,.24);
+    transition: .2s;
+}
+
+.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 28px rgba(48,112,110,.3);
+}
+
+.primary:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.secondary {
+    border: 2px solid var(--teal);
+    background: white;
+    color: var(--teal);
+    border-radius: 16px;
+    padding: 13px 25px;
+    font-weight: 700;
+    transition: .2s;
+}
+
+.secondary:hover {
+    background: var(--pale);
+}
+
+/* NAVIGATIE */
+.nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+    gap: 15px;
+}
+
+.progress {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #d7e5dc;
+    transition: .3s;
+}
+
+.dot.on {
+    width: 28px;
+    border-radius: 8px;
+    background: var(--lime);
+}
+
+/* INTRODUCTIE */
+.intro-grid {
+    display: grid;
+    grid-template-columns: 1.1fr .9fr;
+    gap: 45px;
+    align-items: center;
+    margin-top: 30px;
+}
+
+.info-card {
+    background: var(--pale);
+    border-radius: 25px;
+    padding: 28px;
+}
+
+.info-card strong {
+    color: var(--blue);
+}
+
+.bullet {
+    display: flex;
+    gap: 14px;
+    margin: 17px 0;
+    font-size: 18px;
+    line-height: 1.4;
+}
+
+.check {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--green);
+    color: white;
+    display: grid;
+    place-items: center;
+    font-weight: 900;
+    flex: none;
+}
+
+/* EVOLUTIE AFBEELDING */
+.evolution-img {
+    max-height: 320px;
+    max-width: 280px;
+    width: 100%;
+    display: block;
+    margin: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 16px 18px rgba(27,69,91,.16));
+    transition: all 0.4s ease-in-out;
+}
+
+/* VRAGEN */
+.question-layout {
+    display: grid;
+    grid-template-columns: .75fr 1.25fr;
+    gap: 55px;
+    align-items: center;
+    margin-top: 15px;
+}
+
+.question-card {
+    background: #fff;
+    border-radius: 28px;
+    padding: 32px;
+    box-shadow: 0 12px 35px rgba(27,69,91,.09);
+    border: 1px solid #e7f0e7;
+}
+
+.question-number {
+    display: inline-flex;
+    padding: 8px 13px;
+    border-radius: 12px;
+    background: var(--pale);
+    color: var(--teal);
+    font-weight: 800;
+}
+
+.question {
+    font-size: clamp(22px, 3.5vw, 31px);
+    line-height: 1.25;
+    color: var(--blue);
+    margin: 20px 0 30px;
+    font-weight: 800;
+}
+
+.scale {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 9px;
+}
+
+.scale button {
+    height: 58px;
+    border: 2px solid #d9e7dc;
+    background: white;
+    border-radius: 13px;
+    color: var(--blue);
+    font-weight: 800;
+    transition: .15s;
+    padding: 0;
+}
+
+.scale button.selected {
+    background: var(--green);
+    color: white;
+    border-color: var(--green);
+    transform: translateY(-2px);
+}
+
+.scale-labels {
+    display: flex;
+    justify-content: space-between;
+    color: #78909a;
+    font-size: 13px;
+    margin: 8px 3px 20px;
+}
+
+.footer-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 26px;
+    flex-wrap: wrap;
+}
+
+/* RESULTATEN & DROPDOWN SCHERM 4 */
+.results-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.profile-avatar-wrap {
+    width: 180px;
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.profile-avatar-wrap img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.dimensions {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 24px;
+}
+
+.dim {
+    border-radius: 20px;
+    background: #fff;
+    border: 1px solid #e0ece1;
+    box-shadow: 0 8px 20px rgba(27,69,91,.06);
+    overflow: hidden;
+    transition: all 0.2s ease;
+    align-self: start;
+}
+
+.dim-header {
+    padding: 20px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s;
+}
+
+.dim-header:hover {
+    background: #f8fcf4;
+}
+
+.dim-title-wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.dim h3 {
+    margin: 0;
+    color: var(--blue);
+    font-size: 19px;
+}
+
+.dim-arrow {
+    font-size: 12px;
+    color: var(--teal);
+    transition: transform 0.3s ease;
+}
+
+.dim.open .dim-arrow {
+    transform: rotate(180deg);
+}
+
+.bar {
+    height: 10px;
+    background: #e9f0e8;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.bar span {
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg, var(--teal), var(--lime));
+    border-radius: 10px;
+    transition: width 0.5s ease-in-out;
+}
+
+.dim small {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    color: #6b818a;
+}
+
+.dim-dropdown-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out, padding 0.3s ease;
+    padding: 0 20px;
+    background: #fcfdfe;
+    border-top: 0px solid #e0ece1;
+}
+
+.dim.open .dim-dropdown-content {
+    max-height: 300px;
+    padding: 16px 20px 20px 20px;
+    border-top-width: 1px;
+}
+
+.action-box {
+    background: var(--pale);
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-top: 10px;
+}
+
+.action-box strong {
+    color: var(--blue);
+    display: block;
+    margin-bottom: 4px;
+    font-size: 14px;
+}
+
+.action-box p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+/* DROPDOWN STIJLEN VOOR SCHERM 5 */
+.dropdown-card {
+    background: #fff;
+    border: 1px solid #e0ece1;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(27,69,91,.06);
+    overflow: hidden;
+    transition: all 0.2s ease;
+    align-self: start;
+}
+
+.dropdown-header {
+    padding: 22px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    background: #ffffff;
+    transition: background 0.2s;
+}
+
+.dropdown-header:hover {
+    background: #f8fcf4;
+}
+
+.dropdown-header h3 {
+    margin: 0;
+    color: var(--blue);
+    font-size: 20px;
+}
+
+.dropdown-arrow {
+    font-size: 14px;
+    color: var(--teal);
+    transition: transform 0.3s ease;
+}
+
+.dropdown-card.open .dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+.dropdown-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out, padding 0.3s ease;
+    padding: 0 24px;
+    background: #fff;
+}
+
+.dropdown-card.open .dropdown-content {
+    max-height: 300px;
+    padding: 0 24px 22px 24px;
+}
+
+.dropdown-content p {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #48616d;
+}
+
+/* MEDIA QUERIES VOOR RESPONSIVENESS */
+@media (max-width: 1024px) {
+    .dimensions {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 900px) {
+    .app {
+        padding: 12px;
+    }
+    
+    .screen {
+        min-height: auto;
+        border-radius: 20px;
+    }
+    
+    .content {
+        padding: 28px 20px;
+    }
+    
+    .intro-grid, .question-layout {
+        grid-template-columns: 1fr;
+        gap: 25px;
+    }
+    
+    .evolution-img {
+        max-height: 200px;
+    }
+    
+    .results-head {
+        flex-direction: column-reverse;
+        text-align: center;
+        align-items: center;
+    }
+
+    .profile-avatar-wrap {
+        width: 140px;
+        height: 140px;
+    }
+}
+
+@media (max-width: 600px) {
+    .dimensions {
+        grid-template-columns: 1fr;
+    }
+    
+    .scale {
+        grid-template-columns: repeat(5, 1fr);
+    }
+
+    .primary, .secondary {
+        width: 100%;
+        text-align: center;
+        padding: 15px 20px;
+        font-size: 18px;
+    }
+
+    .footer-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .info-card {
+        padding: 18px;
+    }
+
+    .question-card {
+        padding: 20px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- SCHERM 1: START -->
+    <section class="screen start active" id="s1">
+        <div class="logo-wrap">
+            <img src="img/Gezonde Hub Uitdaging Logo (1).png" alt="Healthy Hub Logo">
+        </div>
+        <div class="kicker">Ontdek jouw positieve gezondheid</div>
+        <h1>Healthy Hub Challenge</h1>
+        <p>Speel, ontdek en krijg inzicht in de 6 dimensies van jouw gezondheid.</p>
+        <button class="primary" onclick="go(2)">START DE CHALLENGE →</button>
+    </section>
+
+    <!-- SCHERM 2: INTRODUCTIE -->
+    <section class="screen" id="s2">
+        <div class="content">
+            <div class="nav">
+                <div class="kicker">Healthy Hub</div>
+                <div class="progress">
+                    <span class="dot on"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </div>
+            </div>
+            <div class="intro-grid">
+                <div>
+                    <div class="kicker">Welkom bij jouw challenge</div>
+                    <h2>Wat betekent positieve gezondheid?</h2>
+                    <p>Gezondheid gaat niet alleen over ziek zijn of gezond eten. Positieve gezondheid kijkt naar hoe jij je voelt en hoe het gaat in verschillende onderdelen van je leven.</p>
+                    <div class="info-card">
+                        <div class="bullet">
+                            <span class="check">✓</span>
+                            <span><strong>Jij staat centraal.</strong><br>Er is geen goed of fout antwoord.</span>
+                        </div>
+                        <div class="bullet">
+                            <span class="check">✓</span>
+                            <span><strong>Ontdek wat bij jou past.</strong><br>Je antwoorden vormen jouw persoonlijke profiel.</span>
+                        </div>
+                        <div class="bullet">
+                            <span class="check">✓</span>
+                            <span><strong>Daarna ga je spelen.</strong><br>Per dimensie komt een korte game van ongeveer 10–15 minuten.</span>
+                        </div>
+                    </div>
+                </div>
+                <div style="text-align:center">
+                    <img class="evolution-img" src="img/entity1.png" alt="Evolutie Fase 1">
+                    <p><strong style="color:var(--teal)">Klaar om jouw profiel te ontdekken?</strong></p>
+                    <button class="primary" onclick="go(3)">NAAR DE VRAGEN →</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SCHERM 3: VRAGEN -->
+    <section class="screen" id="s3">
+        <div class="content">
+            <div class="nav">
+                <div class="kicker" id="qstep-kicker">Stap 1 van 3</div>
+                <div class="progress">
+                    <span class="dot on"></span>
+                    <span class="dot on"></span>
+                    <span class="dot on"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </div>
+            </div>
+            <div class="question-layout">
+                <div style="text-align:center">
+                    <img class="evolution-img" id="questionEvoImg" src="img/entity1.png" alt="Evolutie">
+                </div>
+                <div class="question-card">
+                    <span class="question-number">Vraag <span id="qnum">1</span> / <span id="qtotal">3</span></span>
+                    <div class="question" id="qtext">Laden...</div>
+                    <div class="scale" id="scale"></div>
+                    <div class="scale-labels">
+                        <span>1 — heel slecht</span>
+                        <span>10 — heel goed</span>
+                    </div>
+                    <div class="footer-actions">
+                        <button class="primary" id="nextBtn" onclick="nextQuestion()" disabled>VOLGENDE →</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SCHERM 4: PROFIEL / RESULTATEN -->
+    <section class="screen" id="s4">
+        <div class="content">
+            <div class="nav">
+                <div class="kicker">Jouw profiel</div>
+                <div class="progress">
+                    <span class="dot on"></span>
+                    <span class="dot on"></span>
+                    <span class="dot on"></span>
+                    <span class="dot on"></span>
+                    <span class="dot"></span>
+                </div>
+            </div>
+            <div class="results-head">
+                <div>
+                    <div class="kicker">Dit ben jij op dit moment</div>
+                    <h2>Jouw persoonlijke gezondheidsprofiel</h2>
+                    <p>Op basis van jouw antwoorden is een eerste profiel ontstaan.<br>Klik op een dimensie om jouw aanbevolen vervolgstap te bekijken!</p>
+                </div>
+                <div class="profile-avatar-wrap">
+                    <img class="evolution-img" id="finalEvoImg" src="img/entity3.png" alt="Eind Evolutie">
+                </div>
+            </div>
+            <div class="dimensions" id="profileDimensions"></div>
+            <div class="footer-actions" style="justify-content: space-between; margin-top: 32px;">
+                <button class="secondary" onclick="go(1)">🏠 TERUG NAAR START</button>
+                <button class="primary" onclick="go(5)">BEKIJK DE INFORMATIE →</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- SCHERM 5: INFORMATIE OVERZICHT MET DROPDOWNS -->
+    <section class="screen" id="s5">
+        <div class="content">
+            <div class="nav">
+                <div class="kicker">6 DIMENSIES • INFORMATIE</div>
+                <div class="progress">
+                    <span class="dot on"></span>
+                    <span class="dot on"></span>
+                    <span class="dot on"></span>
+                    <span class="dot on"></span>
+                    <span class="dot on"></span>
+                </div>
+            </div>
+            <div class="kicker">KIES EEN DIMENSIE</div>
+            <h2>Welke kant van jouw gezondheid wil je ontdekken?</h2>
+            <p>Klik op een dimensie om er meer informatie over te lezen.</p>
+            <div class="dimensions" id="gamesGrid"></div>
+            <div class="footer-actions" style="justify-content: space-between; margin-top: 32px;">
+                <button class="secondary" onclick="go(4)">← TERUG NAAR PROFIEL</button>
+                <button class="secondary" onclick="go(1)">🏠 OPNIEUW BEGINNEN</button>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<script>
+// Paden naar de 3 evolutie-afbeeldingen in de img/ map
+const evolutionImages = [
+    "img/entity1.png", // Evolutie 1
+    "img/entity2.png", // Evolutie 2
+    "img/entity3.png"  // Evolutie 3
+];
+
+const dimensionsData = [
+    {
+        id: "lichaam",
+        title: "🌿 Lichaamsfuncties",
+        desc: "Fitheid, slapen, bewegen",
+        fullText: "Ontdek jouw energie, bewegen, slaap en fitheid. Lichaamsfuncties gaan over hoe goed je lichaam werkt en hoeveel energie je dagelijks voelt.",
+        score: 7.0,
+        actions: {
+            low: "Je geeft aan dat je lichamelijke fitheid of slaap aandacht kan gebruiken. Kies voor de mini-game 'Slaap & Beweging' om eenvoudige routines te ontdekken.",
+            medium: "Je hebt een mooie basis op het gebied van fitheid. Bekijk de tips over dagelijks bewegen om je energieniveau stabiel te houden.",
+            high: "Je voelt je heel fit! Je vervolgstap is om deze gezonde gewoontes vast te houden en eventueel anderen te inspireren."
+        }
+    },
+    {
+        id: "mentaal",
+        title: "🧠 Mentaal welbevinden",
+        desc: "Concentreren, vrolijk zijn",
+        fullText: "Onderzoek concentratie, emoties en omgaan met verandering. Mentaal welbevinden gaat over hoe vrolijk, rustig en gefocust je bent.",
+        score: 6.8,
+        actions: {
+            low: "Je geeft aan dat ontspanning of vrolijkheid soms lastig is. Start de ontspannings-challenge of doe een korte ademhalingsoefening.",
+            medium: "Je mentaal welbevinden is in balans. Ontdek in de module hoe je beter kunt omgaan met drukke of stressvolle momenten.",
+            high: "Je bent mentaal erg veerkrachtig en positief! Blijf bewust tijd maken voor ontspanning en dingen die je leuk vindt."
+        }
+    },
+    {
+        id: "zingeving",
+        title: "✨ Zingeving",
+        desc: "Levenslust, vertrouwen",
+        fullText: "Ontdek wat belangrijk voor je is en waar je energie van krijgt. Zingeving gaat over levenslust, idealen en vertrouwen in de toekomst.",
+        score: 7.0,
+        actions: {
+            low: "Twijfel je soms over wat echt belangrijk voor je is? Doe de 'Waarden & Passie' test om te ontdekken waar jij energie van krijgt.",
+            medium: "Je hebt een goed gevoel bij wat je doet. Bekijk hoe je nog meer activiteiten kunt kiezen die aansluiten bij jouw doelen.",
+            high: "Je ervaart veel zingeving en doel in je leven! Blijf dit gevoel voeden door je te blijven richten op wat jou inspireert."
+        }
+    },
+    {
+        id: "kwaliteit",
+        title: "🏡 Kwaliteit van leven",
+        desc: "Balans, veiligheid, genieten",
+        fullText: "Informatie rond genieten, balans, veiligheid en je leefomgeving. Dit betreft hoe prettig en veilig je woont en hoe goed je kunt ontspannen.",
+        score: 7.5,
+        actions: {
+            low: "Je ervaart wat minder balans of tevredenheid in je omgeving. Bekijk de adviezen over het inrichten van een fijne en rustige leefomgeving.",
+            medium: "Je bent over het algemeen tevreden met je leefomgeving. Zoek naar kleine manieren om dagelijks meer te genieten van ontspanning.",
+            high: "Je geniet volop van je leefomgeving en kwaliteit van leven! Houd deze fijne balans tussen rust en verplichtingen vast."
+        }
+    },
+    {
+        id: "meedoen",
+        title: "🤝 Meedoen",
+        desc: "Contacten, erbij horen",
+        fullText: "Ontdek sociale contacten, steun en jouw plek in de maatschappij. Meedoen gaat over erbij horen, vrienden, familie en samen dingen ondernemen.",
+        score: 6.8,
+        actions: {
+            low: "Je zou soms wat meer steun of contact wensen. Bekijk laagdrempelige activiteiten en clubs bij jou in de buurt om nieuwe mensen te ontmoeten.",
+            medium: "Je hebt fijne sociale contacten. Verdiep je relaties door vaker samen dingen te ondernemen of hulp te vragen als dat nodig is.",
+            high: "Je voelt je heel betrokken en verbonden met anderen! Blijf investeer in je vrienden en sociale kring."
+        }
+    },
+    {
+        id: "dagelijks",
+        title: "🎯 Dagelijks functioneren",
+        desc: "Grenzen, tijd, hulp vragen",
+        fullText: "Inzicht in grenzen aangeven, tijd indelen en hulp vragen. Dit gaat over de dagelijkse zaken die je helpen om zelfstandig je leven te leiden.",
+        score: 7.3,
+        actions: {
+            low: "Dagelijkse taken of grenzen aangeven kosten je energie. Bekijk de plannings-tools en tips om makkelijker 'nee' te zeggen of hulp te vragen.",
+            medium: "Het dagelijks organiseren gaat je prima af. Oefen met het bewaken van je grenzen op drukke dagen.",
+            high: "Je bent uitstekend in staat om je eigen leven te plannen en grenzen te bewaken. Een heel sterk punt om vast te houden!"
+        }
+    }
+];
+
+const introQuestions = [
+    "Hoe gaat het met je gezondheid nu?",
+    "Hoe fit voel je je op dit moment?",
+    "Hoe gelukkig voel je je nu?"
+];
+
+let currentMode = "intro";
+let currentQuestions = [];
+let qi = 0;
+let answers = [];
+
+function go(n) {
+    document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+    document.getElementById("s" + n).classList.add("active");
+    window.scrollTo(0, 0);
+
+    if (n === 1) {
+        answers = [];
+        qi = 0;
+    } else if (n === 3 && currentQuestions.length === 0) {
+        startIntroQuestions();
+    } else if (n === 3) {
+        renderQuestion();
+    } else if (n === 4) {
+        renderProfileScreen();
+    } else if (n === 5) {
+        renderGamesScreen();
+    }
+}
+
+function startIntroQuestions() {
+    currentMode = "intro";
+    currentQuestions = introQuestions;
+    qi = 0;
+    answers = [];
+    document.getElementById("qstep-kicker").textContent = "Stap 1 van 3";
+    renderQuestion();
+}
+
+function renderQuestion() {
+    document.getElementById("qnum").textContent = qi + 1;
+    document.getElementById("qtotal").textContent = currentQuestions.length;
+    document.getElementById("qtext").textContent = currentQuestions[qi];
+    document.getElementById("nextBtn").disabled = true;
+
+    const qEvoImg = document.getElementById("questionEvoImg");
+    if (qEvoImg && evolutionImages[qi]) {
+        qEvoImg.src = evolutionImages[qi];
+        qEvoImg.alt = "Evolutie fase " + (qi + 1);
+    }
+
+    const scale = document.getElementById("scale");
+    scale.innerHTML = "";
+
+    for (let i = 1; i <= 10; i++) {
+        const button = document.createElement("button");
+        button.textContent = i;
+
+        if (answers[qi] === i) {
+            button.classList.add("selected");
+            document.getElementById("nextBtn").disabled = false;
+        }
+
+        button.onclick = function () {
+            answers[qi] = i;
+            document.querySelectorAll("#scale button").forEach(b => b.classList.remove("selected"));
+            button.classList.add("selected");
+            document.getElementById("nextBtn").disabled = false;
+        };
+
+        scale.appendChild(button);
+    }
+}
+
+function nextQuestion() {
+    if (qi < currentQuestions.length - 1) {
+        qi++;
+        renderQuestion();
+    } else {
+        if (currentMode === "intro") {
+            processIntroAnswers();
+        }
+        go(4);
+    }
+}
+
+function processIntroAnswers() {
+    const sum = answers.reduce((a, b) => a + b, 0);
+    const avg = sum / answers.length;
+    dimensionsData.forEach(dim => {
+        dim.score = parseFloat(((dim.score + avg) / 2).toFixed(1));
+    });
+}
+
+function renderProfileScreen() {
+    const container = document.getElementById("profileDimensions");
+    container.innerHTML = "";
+    let totalScore = 0;
+
+    dimensionsData.forEach(dim => {
+        totalScore += dim.score;
+        const percentage = Math.min(Math.max(dim.score * 10, 10), 100);
+
+        let actionText = "";
+        let labelText = "";
+        if (dim.score < 6.0) {
+            actionText = dim.actions.low;
+            labelText = "Aandachtspunt — Aanbevolen actie:";
+        } else if (dim.score <= 7.5) {
+            actionText = dim.actions.medium;
+            labelText = "Mooie basis — Vervolgstap:";
+        } else {
+            actionText = dim.actions.high;
+            labelText = "Sterk punt — Tip om te behouden:";
+        }
+
+        const dimEl = document.createElement("div");
+        dimEl.className = "dim";
+        dimEl.innerHTML = `
+            <div class="dim-header" onclick="toggleDimDropdown(this)">
+                <div class="dim-title-wrap">
+                    <h3>${dim.title}</h3>
+                    <span class="dim-arrow">▼</span>
+                </div>
+                <div class="bar">
+                    <span style="width:${percentage}%"></span>
+                </div>
+                <small>
+                    <span>${dim.desc}</span>
+                    <b>${dim.score.toString().replace('.', ',')}</b>
+                </small>
+            </div>
+            <div class="dim-dropdown-content">
+                <div class="action-box">
+                    <strong>${labelText}</strong>
+                    <p>${actionText}</p>
+                </div>
+            </div>
+        `;
+        container.appendChild(dimEl);
+    });
+
+    const avgTotal = totalScore / dimensionsData.length;
+    const finalImg = document.getElementById("finalEvoImg");
+    if (finalImg) {
+        if (avgTotal < 6.0) {
+            finalImg.src = evolutionImages[0];
+        } else if (avgTotal <= 7.2) {
+            finalImg.src = evolutionImages[1];
+        } else {
+            finalImg.src = evolutionImages[2];
+        }
+    }
+}
+
+function toggleDimDropdown(headerEl) {
+    const card = headerEl.parentElement;
+    card.classList.toggle("open");
+}
+
+function renderGamesScreen() {
+    const container = document.getElementById("gamesGrid");
+    container.innerHTML = "";
+
+    dimensionsData.forEach((dim) => {
+        const card = document.createElement("div");
+        card.className = "dropdown-card";
+
+        card.innerHTML = `
+            <div class="dropdown-header" onclick="toggleDropdown(this)">
+                <h3>${dim.title}</h3>
+                <span class="dropdown-arrow">▼</span>
+            </div>
+            <div class="dropdown-content">
+                <p>${dim.fullText}</p>
+            </div>
+        `;
+
+        container.appendChild(card);
+    });
+}
+
+function toggleDropdown(headerEl) {
+    const card = headerEl.parentElement;
+    card.classList.toggle("open");
+}
+
+window.onload = function() {
+    startIntroQuestions();
+};
+</script>
+
+</body>
+</html>
